@@ -243,9 +243,6 @@ CTtimeseriesforecasts
 plot(CTtimeseriesforecasts)
 
 
-
-
-
 Publication = cbind(as.numeric(PubMedtimeseriesforecasts$x), as.numeric(c(1990:2020)), rep("Publications",31))
 Clinical = cbind(as.numeric(CTtimeseriesforecasts$x), as.numeric(c(1990:2020)), rep("Clinical trials",31))
 gesamt = as.data.frame(rbind(Publication, Clinical),  stringsAsFactors = F)
@@ -270,13 +267,13 @@ Anorm = ggplot(gesamt, aes(x=V2, y=gesamtNorm, color=V3, shape=V3)) +
         legend.text = element_text(size = 60),# legend.position = c(.05, .95),
         plot.margin = unit(c(1,2,1,1), "cm"),
         legend.position = "none",
-        legend.justification = c("left", "top"), plot.tag = element_text(size = 100))+ ylab("Normalized\nannual number") + xlab("Year")
+        legend.justification = c("left", "top"), plot.tag = element_text(size = 100))+ ylab("Normalized\nnumber") + xlab("Year")
 
 
 
 
 A = ggplot(gesamt, aes(x=V2, y=V1, color=V3, shape=V3)) + 
-  geom_point(size = 12)+
+  geom_point(size = 14)+
   scale_color_manual(values=c("grey","black"))+
   coord_cartesian(xlim = c(1990, 2020))+
   labs(tag = "a")+
@@ -287,17 +284,18 @@ A = ggplot(gesamt, aes(x=V2, y=V1, color=V3, shape=V3)) +
         axis.line = element_line(colour = "black"), legend.key = element_blank(),
         legend.text = element_text(size = 60), legend.position = c(.05, .95),
         plot.margin = unit(c(1,1,5,1), "cm"), plot.tag = element_text(size = 100),
-        legend.justification = c("left", "top")) + ylab("Annual\nnumber") + xlab("Year")
+        legend.justification = c("left", "top")) + ylab("Number") + xlab("Year")
 
 ### Abbildung2
 
 # create a dataset
 specie <- c(rep("Pharmacological" , 2) , rep("Therapeutic\nEngineering" , 2) , rep("Transplantation" , 2) , rep("Stem Cells" , 2) )
 condition <- factor(rep(c("Publications" , "Clinical Trials") , 4), levels= c("Publications", "Clinical Trials"))
-value <- c(31.1708860759494, 33.3609958506224,
-           14.0498214865303, 34.356846473029,
-           19.2267121064589, 5.56016597510373,
-           12.6054852320675, 4.23236514522822)
+
+value <- c(36.6197183098592,31.1708860759494,
+           35.2941176470588,13.0639402791302,
+           10.1077050538525,17.0886075949367,
+           8.36785418392709, 10.4186952288218)
 data <- data.frame(specie,condition,value, stringsAsFactors = F)
 
 data_pub_sorted = data[data$condition == 'Publications',]
@@ -308,7 +306,7 @@ B = ggplot(data, aes(fill=condition, y=value, x=specie)) +
   geom_bar(position="dodge", stat="identity",width = 0.4)+
   scale_fill_manual(values=c( "grey","black"))+
   scale_x_discrete(guide = guide_axis(angle = 45), breaks = names_sorted) +
-  labs(tag = "c")+
+  labs(tag = "e")+
   theme(legend.title=element_blank(), plot.title = element_text(hjust = 0.5,face="bold", size = 100),
         axis.text=element_text(size=60, color = "black"),
         axis.title=element_text(size=60), panel.background = element_blank(),
@@ -322,21 +320,25 @@ B = ggplot(data, aes(fill=condition, y=value, x=specie)) +
 ### Abbildung2c
 
 # create a dataset
-specie <- c(rep("MotorControl/\nMotorFunction" , 2) , rep("Pain" , 2), rep("Gait/Locomotor/\nLocomotion/Walking" , 2) , 
-            rep("Sensation/\nSensory" , 2), rep("Grasping/HandFunction/\nUpperExtremityFunction" , 2), rep("Bladder" , 2), 
-            rep("Spasticity" , 2), rep("Bowel" , 2), rep("Decubitus" , 2), 
-            rep("Erectile/\nSexualDysfunction" , 2), rep("Neuroprotection/\nNeuroprotective" , 2))
-value <- c(5.95180136319377, 21.1618257261411, 
-           17.5227198961376, 23.8174273858921,
-           12.7637130801688, 18.5892116182573,
-           10.0900681596884, 21.4107883817427,
-           0.709996754300552, 21.9917012448133,
-           3.12804284323272, 13.4439834024896,
-           1.32667964946446, 12.9460580912863,
-           0.872281726712106, 7.46887966804979,
-           0.121713729308666, 4.64730290456432,
-           0.186627718273288, 2.73858921161826,
-           13.3195391106784, 0.912863070539419
+
+specie <- c(rep("Pain" , 2),rep("Grasping/HandFunction/\nUpperExtremityFunction" , 2), 
+             rep("Sensation/\nSensory" , 2),rep("MotorControl/\nMotorFunction" , 2) ,
+             rep("Gait/Locomotor/\nLocomotion/Walking" , 2) ,rep("Bladder" , 2), 
+             rep("Spasticity" , 2), rep("Bowel" , 2), rep("Decubitus" , 2), 
+             rep("Erectile/\nSexualDysfunction" , 2), rep("Neuroprotection/\nNeuroprotective" , 2))
+
+
+value <- c(23.78, 16.8086660175268,
+           21.96 , 0.693768257059396, 
+           21.38, 9.41252839987017,
+           21.13, 14.6867900032457,
+           21.13, 5.54608893216488,
+           13.42, 2.86432976306394,
+           12.92, 1.17250892567348,
+           7.46, 0.770853618954885,
+           4.64, 0.109542356377799,
+           1.66, 0.170399221032132,
+           0.91, 12.808341447582
 )
 condition <- factor(rep(c("Publications" , "Clinical Trials") , 11), levels= c("Publications", "Clinical Trials"))
 data <- data.frame(specie,condition,value, stringsAsFactors = F)
@@ -347,8 +349,8 @@ data$specie = factor(data$specie, levels = names_sorted)
 C = ggplot(data, aes(fill=condition, y=value, x=specie)) + 
   geom_bar(position="dodge", stat="identity")+
   scale_fill_manual(values=c( "grey","black"))+
-  coord_cartesian(ylim = c(0, 20))+
-  labs(tag = "d")+
+  coord_cartesian(ylim = c(0, 24))+
+  labs(tag = "c")+
   scale_x_discrete(guide = guide_axis(angle = 45), breaks = names_sorted) +
   theme(legend.title=element_blank(), plot.title = element_text(hjust = 0.5,face="bold", size = 100),
         axis.text=element_text(size=60, color = "black"),
@@ -359,8 +361,32 @@ C = ggplot(data, aes(fill=condition, y=value, x=specie)) +
         legend.position = "none", plot.tag = element_text(size = 100)) +
   xlab("") + ylab("% SCI Studies")
 
+
+# create a dataset
+specie <- factor(rep(c("Clinical Trials", "Publications") , 1), levels= c("Clinical Trials", "Publications") )
+condition <- factor(rep(c("Clinical Trials", "Publications")  , 1), levels= c("Clinical Trials", "Publications") )
+value <- c(43.4134217067108, 8.04)
+data <- data.frame(specie,condition,value)
+
+# Grouped
+ D= ggplot(data, aes(fill=condition, y=value, x=specie)) + 
+  geom_bar(position="dodge", stat="identity")+
+  scale_fill_manual(values=c("grey","black"))+
+  coord_cartesian(ylim = c(0, 45))+
+  labs(tag = "d")+
+  scale_x_discrete(guide = guide_axis(angle = 45)) +
+   theme(legend.title=element_blank(), plot.title = element_text(hjust = 0.5,face="bold", size = 100),
+         axis.text=element_text(size=60, color = "black"),
+         axis.title=element_text(size=60), panel.background = element_blank(),
+         axis.line = element_line(colour = "black"),
+         # axis.line = element_line(colour = "black"), legend.key = element_blank(),
+         # legend.text = element_text(size = 25))+
+         legend.position = "none", plot.tag = element_text(size = 100)) +
+   xlab("") + ylab("% SCI Studies")
+
+   
 png(filename = "~/Documents/Uni/Neuro/Vero/Abbildungen_Tabellen/BilderFinal/Fig2alle.png",width = 2882 , height = 2782)
-(A | Anorm) / B / C
+(A | Anorm) / C/(D | B) 
 #A - Anorm + B - C + plot_layout(ncol=1)
 dev.off()
 
@@ -390,7 +416,7 @@ Publicationtimeseriesforecasts
 clinicalseries <- ts(clinical,start=c(1990))
 
 auto.arima(clinical)
-clinicalseriesarima <- arima(clinicalseries, order=c(0,1,1)) 
+clinicalseriesarima <- arima(clinicalseries, order=c(2,1,0)) 
 clinicalseriesarima
 
 clinicaltimeseriesforecasts <- forecast:::forecast.Arima(clinicalseriesarima, h=5)
@@ -405,7 +431,7 @@ gesamt$V2 = as.numeric(gesamt$V2)
 
 
 A = ggplot(gesamt, aes(x=V2, y=V1, color=V3, shape=V3)) + 
-  geom_point(size = 24)+
+  geom_point(size = 14)+
   scale_color_manual(values=c("grey","black"))+ #c("#ed230d","#1a2eff")
   coord_cartesian(xlim = c(1990, 2021))+
   #labs(tag = "a")+
@@ -458,7 +484,7 @@ clinical_PublicationLangPUB =clinical_PublicationLang[clinical_PublicationLang$c
 
 
 B = ggplot(clinical_PublicationLangPUB) + 
-  geom_point(aes(x = year, y = value, color = variable, shape = variable),size = 15, stroke = 5) + 
+  geom_point(aes(x = year, y = value, color = variable, shape = variable),size = 5, stroke = 5) + 
   coord_cartesian(ylim = c(0, 505), xlim = c(1990, 2021))+
   scale_shape_manual(values=c(0,1,2,3,4))+
   labs(tag = "b")+
@@ -481,7 +507,7 @@ clinical_PublicationLangCLI =clinical_PublicationLang[clinical_PublicationLang$c
 
 
 C = ggplot(clinical_PublicationLangCLI) + 
-  geom_point(aes(x = year, y = value, color = variable, shape = variable), stroke = 5 , size =15) +
+  geom_point(aes(x = year, y = value, color = variable, shape = variable), stroke = 5 , size =5) +
   coord_cartesian(ylim = c(0, 50), xlim = c(1990, 2021))+
   labs(tag = "c")+
   scale_shape_manual(values=c(0,1,2,3,4))+
@@ -519,7 +545,7 @@ Publicationseries <- ts(Publications,start=c(1990))
 plot.ts(Publicationseries)
 
 auto.arima(Publications)
-Publicationseriesarima <- arima(Publicationseries, order=c(0,1,1)) # fit an ARIMA(0,1,0) model
+Publicationseriesarima <- arima(Publicationseries, order=c(1,1,0)) # fit an ARIMA(0,1,0) model
 Publicationseriesarima
 
 Publicationtimeseriesforecasts <- forecast:::forecast.Arima(Publicationseriesarima, h=6)
@@ -674,8 +700,8 @@ gesamt = as.data.frame(rbind(Publication, Clinical),  stringsAsFactors = F)
 gesamt$V1 = as.numeric(gesamt$V1)
 gesamt$V2 = as.numeric(gesamt$V2)
 
-A =ggplot(gesamt, aes(x=V2, y=V1, color=V3)) + 
-  geom_point(shape=15, size = 14)+
+A =ggplot(gesamt, aes(x=V2, y=V1, color=V3, shape=V3)) +
+  geom_point(size = 14)+
   scale_color_manual(values=c("grey","black"))+
   coord_cartesian(xlim = c(1990, 2021))+
   scale_y_continuous(breaks=c(0,100,200,300,400,500))+
@@ -795,7 +821,7 @@ plot.ts(clinicalseries)
 
 
 auto.arima(clinical)
-clinicalseriesarima <- arima(clinicalseries, order=c(0,1,0)) 
+clinicalseriesarima <- arima(clinicalseries, order=c(2,1,0)) 
 clinicalseriesarima
 
 clinicaltimeseriesforecasts <- forecast:::forecast.Arima(clinicalseriesarima, h=5)
@@ -838,7 +864,7 @@ c_pLang = c(rep("clinical", 26),
             rep("publication", 31)
 )
 
-
+Stem_Cells_CuP = rbind(Stem_Cells_Clinical, Stem_Cells_Publication)
 Stem_Cells_CuPLang = reshape::melt.data.frame(Stem_Cells_CuP[,c(1:6)], "year")
 Stem_Cells_CuPLang = data.frame(Stem_Cells_CuPLang,c_pLang)
 
@@ -872,17 +898,17 @@ B = ggplot(Stem_Cells_CuPLangPUBX) +
 
 Stem_Cells_CuPLangCLI =Stem_Cells_CuPLang[Stem_Cells_CuPLang$c_pLang=="clinical"& Stem_Cells_CuPLang$variable != "Total",]
 
-Stem_Cells_CuPLangCLIX = rbind(Stem_Cells_CuPLangCLI[32:124,],Stem_Cells_CuPLangCLI[1:31,])
+Stem_Cells_CuPLangCLIX = rbind(Stem_Cells_CuPLangCLI[27:104,],Stem_Cells_CuPLangCLI[1:26,])
 Stem_Cells_CuPLangCLIX$variable<- as.character(Stem_Cells_CuPLangCLIX$variable)
 Stem_Cells_CuPLangCLIX$variable[Stem_Cells_CuPLangCLIX$variable == "Stem Cell (other)"] <- "Other Stem Cells"
 Stem_Cells_CuPLangCLIX$variable<- as.factor(Stem_Cells_CuPLangCLIX$variable)
 
 
-C = ggplot(Stem_Cells_CuPLangCLI) + 
+C = ggplot(Stem_Cells_CuPLangCLIX) + 
   geom_point(aes(x = year, y = value, color = variable, shape = variable), size = 8, stroke = 5) + 
   coord_cartesian(ylim = c(0, 20), xlim = c(1990, 2021))+
   labs(tag = "c")+
-  scale_shape_manual(values=c(0,1,3,4,5,2))+
+  scale_shape_manual(values=c(0,1,2,3,4,5))+
   #scale_color_manual(values=c('#3399FF','#999999','#CC0033','#CC0033'))+
   theme(legend.title=element_blank(), plot.title = element_text(hjust = 0.5,face="bold", size = 100),
         axis.text=element_text(size=60, color = "black"),
@@ -914,7 +940,7 @@ Stem_Cells_CuPLang = data.frame(Stem_Cells_CuPLang,c_pLang)
 
 
 cps = Stem_Cells_CuPLang[order(Stem_Cells_CuPLang$c_pLang),]
-cs = cps[1:254,]
+cs = cps[1:130,]
 
 levels(cs$variable)
 
@@ -926,7 +952,7 @@ cs$variable <- ordered(cs$variable,
                                   "Embryonic Stem Cell"))
 
 
-cs = cs[27:254,]
+#cs = cs[27:254,]
 
 group_by(cs, variable) %>%
   summarise(
@@ -935,7 +961,7 @@ group_by(cs, variable) %>%
     sd = sd(value, na.rm = TRUE)
   )
 
-css = rbind(cs[27:104,],cs[1:26,])
+css = rbind(cs[27:130,])
 css$variable<- as.character(css$variable)
 css$variable[css$variable == "Stem Cell (other)"] <- "Other Stem Cells"
 css$variable<- as.factor(css$variable)
@@ -978,7 +1004,7 @@ group_by(ps, variable) %>%
     sd = sd(value, na.rm = TRUE)
   )
 
-pss = rbind(ps[63:155,],ps[32:62,])
+pss = rbind(ps[32:62,],ps[63:155,])
 pss$variable<- as.character(pss$variable)
 pss$variable[pss$variable == "Stem Cell (other)"] <- "Other Stem Cells"
 pss$variable<- as.factor(pss$variable)
@@ -1008,34 +1034,34 @@ dev.off()
 
 
 
-#####################
-#### Abbildung 7 ####
-#####################
-
-
-# create a dataset
-specie <- factor(rep(c("Publications" , "Clinical Trials") , 1), levels= c("Publications", "Clinical Trials"))
-condition <- factor(rep(c("Publications" , "Clinical Trials") , 1), levels= c("Publications", "Clinical Trials"))
-value <- c(8.55647517039922,45.5601659751037)
-data <- data.frame(specie,condition,value)
-
-# Grouped
-png(filename = "~/Documents/Uni/Neuro/Vero/Abbildungen_Tabellen/BilderFinal/Fig7.png", width = 1441 , height = 1811)
-ggplot(data, aes(fill=condition, y=value, x=specie)) + 
-  geom_bar(position="dodge", stat="identity")+
-  scale_fill_manual(values=c("black", "grey"))+
-  theme(legend.title=element_blank(), plot.title = element_text(hjust = 0.5,face="bold", size = 100),
-        axis.text=element_text(size=60, color = "black"),
-        axis.title=element_text(size=100),panel.background = element_blank(),axis.line = element_line(colour = "black"),
-        #axis.line = element_line(colour = "black"), legend.key = element_blank(),
-        legend.position = "none",
-        legend.justification = c("left", "top"))+
-  
-  
-  
-  
-  xlab("") + ylab("% SCI Studies")
-dev.off()
+# #####################
+# #### Abbildung 7 ####
+# #####################
+# 
+# 
+# # create a dataset
+# specie <- factor(rep(c("Publications" , "Clinical Trials") , 1), levels= c("Publications", "Clinical Trials"))
+# condition <- factor(rep(c("Publications" , "Clinical Trials") , 1), levels= c("Publications", "Clinical Trials"))
+# value <- c(8.55647517039922,45.5601659751037)
+# data <- data.frame(specie,condition,value)
+# 
+# # Grouped
+# png(filename = "~/Documents/Uni/Neuro/Vero/Abbildungen_Tabellen/BilderFinal/Fig7.png", width = 1441 , height = 1811)
+# ggplot(data, aes(fill=condition, y=value, x=specie)) + 
+#   geom_bar(position="dodge", stat="identity")+
+#   scale_fill_manual(values=c("black", "grey"))+
+#   theme(legend.title=element_blank(), plot.title = element_text(hjust = 0.5,face="bold", size = 100),
+#         axis.text=element_text(size=60, color = "black"),
+#         axis.title=element_text(size=100),panel.background = element_blank(),axis.line = element_line(colour = "black"),
+#         #axis.line = element_line(colour = "black"), legend.key = element_blank(),
+#         legend.position = "none",
+#         legend.justification = c("left", "top"))+
+#   
+#   
+#   
+#   
+#   xlab("") + ylab("% SCI Studies")
+# dev.off()
 
 
 
@@ -1261,7 +1287,7 @@ plot.ts(PubMedseries)
 
 
 auto.arima(PubMed_time)
-PubMedseriesarima <- arima(PubMedseries, order=c(0,1,1)) 
+PubMedseriesarima <- arima(PubMedseries, order=c(1,1,0)) 
 PubMedseriesarima
 
 PubMedtimeseriesforecasts <- forecast:::forecast.Arima(PubMedseriesarima, h=21)
@@ -1338,7 +1364,7 @@ dev.off()
 
 
 auto.arima(PubMed_time)
-PubMedseriesarima <- arima(PubMedseries, order=c(0,1,1)) 
+PubMedseriesarima <- arima(PubMedseries, order=c(1,1,0)) 
 PubMedseriesarima
 
 PubMedtimeseriesforecasts <- forecast:::forecast.Arima(PubMedseriesarima, h=7)
@@ -1414,7 +1440,7 @@ Publicationtimeseriesforecasts <- forecast:::forecast.Arima(Publicationseriesari
 
 clinicalseries <- ts(clinical,start=c(1990))
 auto.arima(clinicalseries)
-clinicalseriesarima <- arima(clinicalseries, order=c(0,1,0)) 
+clinicalseriesarima <- arima(clinicalseries, order=c(2,1,0)) 
 clinicaltimeseriesforecasts <- forecast:::forecast.Arima(clinicalseriesarima, h=5)
 
 
@@ -1526,7 +1552,7 @@ Publicationtimeseriesforecasts <- forecast:::forecast.Arima(Publicationseriesari
 
 clinicalseries <- ts(clinical,start=c(1990))
 auto.arima(clinicalseries)
-clinicalseriesarima <- arima(clinicalseries, order=c(0,1,0)) 
+clinicalseriesarima <- arima(clinicalseries, order=c(0,0,0)) 
 
 clinicaltimeseriesforecasts <- forecast:::forecast.Arima(clinicalseriesarima, h=5)
 
@@ -1572,7 +1598,7 @@ Publication = as.numeric(Transplantation_Publication$`Olfactory Ensheathing Cell
 
 Publicationseries <- ts(Publication,start=c(1990))
 auto.arima(Publicationseries)
-Publicationseriesarima <- arima(Publicationseries, order=c(0,1,0)) 
+Publicationseriesarima <- arima(Publicationseries, order=c(0,0,0)) 
 
 Publicationtimeseriesforecasts <- forecast:::forecast.Arima(Publicationseriesarima, h=6)
 
