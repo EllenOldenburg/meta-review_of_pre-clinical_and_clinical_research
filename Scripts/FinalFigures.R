@@ -331,8 +331,8 @@ specie <- c(rep("Pain" , 2),rep("Grasping/HandFunction/\nUpperExtremityFunction"
 value <- c(23.78, 16.8086660175268,
            21.96 , 0.693768257059396, 
            21.38, 9.41252839987017,
-           21.13, 14.6867900032457,
-           21.13, 5.54608893216488,
+           21.13, 5.54,
+           21.13, 14.69,
            13.42, 2.86432976306394,
            12.92, 1.17250892567348,
            7.46, 0.770853618954885,
@@ -615,7 +615,7 @@ Therapeutic_Engineering_CuPLang = data.frame(Therapeutic_Engineering_CuPLang,c_p
 Therapeutic_Engineering_CuPLangPUB =Therapeutic_Engineering_CuPLang[Therapeutic_Engineering_CuPLang$c_pLang=="publication" & Therapeutic_Engineering_CuPLang$variable!="Total",]
 
 B = ggplot(Therapeutic_Engineering_CuPLangPUB) + 
-  geom_point(aes(x = year, y = value, color = variable, shape = variable), size = 5, stroke = 5) + 
+  geom_point(aes(x = year, y = as.numeric(value), color = variable, shape = variable), size = 5, stroke = 5) + 
   coord_cartesian(ylim = c(0, 200), xlim = c(1990, 2021))+
   labs(tag = "b")+
   scale_shape_manual(values=c(0,1,2,3,4))+
@@ -636,7 +636,7 @@ B = ggplot(Therapeutic_Engineering_CuPLangPUB) +
 Therapeutic_Engineering_CuPLangCLI =Therapeutic_Engineering_CuPLang[Therapeutic_Engineering_CuPLang$c_pLang=="clinical"& Therapeutic_Engineering_CuPLang$variable!="Total",]
 
 C = ggplot(Therapeutic_Engineering_CuPLangCLI) + 
-  geom_point(aes(x = year, y = value, color = variable, shape = variable), size = 5, stroke = 5) + 
+  geom_point(aes(x = year, y = as.numeric(value), color = variable, shape = variable), size = 5, stroke = 5) + 
   coord_cartesian(ylim = c(0, 50), xlim = c(1990, 2021))+
   labs(tag = "c")+
   scale_shape_manual(values=c(0,1,2,3,4))+
@@ -739,7 +739,7 @@ c_pLang = c(rep("clinical", 26),
             
 )
 
-
+Transplantation_CuP = rbind(Transplantation_Clinical, Transplantation_Publication)
 Transplantation_CuPLang = reshape::melt.data.frame(Transplantation_CuP[,c(1:8)], "year")
 Transplantation_CuPLang = data.frame(Transplantation_CuPLang,c_pLang)
 
@@ -837,7 +837,6 @@ gesamt$V2 = as.numeric(gesamt$V2)
 
 A =ggplot(gesamt, aes(x=V2, y=V1, color=V3, shape=V3)) + 
   geom_point(size = 14) + 
-  geom_point(shape=15, size = 18)+
   scale_color_manual(values=c("grey","black"))+
   coord_cartesian(xlim = c(1990, 2021))+
   labs(tag = "a")+
@@ -1215,6 +1214,8 @@ ggplot(PubMed_CT) +
 
 CT_time = as.numeric(c(c(rep("NA", 5),CT$num)))
 PubMed_time = as.numeric(PubMed$num)
+CT_time = CT_time[1:length(CT_time)-1]
+PubMed_time = PubMed_time[1:length(PubMed_time)-1]
 
 PubMedseries <- ts(PubMed_time,start=c(1990))
 plot.ts(PubMedseries)
@@ -1244,7 +1245,7 @@ plot.ts(CTseries)
 
 
 auto.arima(CT_time)
-CTseriesarima <- arima(CTseries, order=c(1,1,0)) 
+CTseriesarima <- arima(CTseries, order=c(1,2,1)) 
 CTseriesarima
 
 CTtimeseriesforecasts <- forecast:::forecast.Arima(CTseriesarima, h=20)
@@ -1258,11 +1259,11 @@ CTforecast$x = NULL
 
 png(filename = paste0("/Users/ellen/Documents/Uni/Neuro/Vero/Abbildungen_Tabellen/BilderFinal/SCIVorhersage.png"), width = 1920 , height = 1080 )
 par(mgp = c(13, 3, 0), mai = c(3,4,1,1))
-plot(1990:2020, PubMedtimeseriesforecasts$x, pch = 17, ylim = c(0,1600), xlim = c(1990,2040),col="black", fcol="black",lwd=8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "", cex=5) 
+plot(1990:2019, PubMedtimeseriesforecasts$x, pch = 17, ylim = c(0,1600), xlim = c(1990,2040),col="black", fcol="black",lwd=8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "", cex=5) 
 par(new=T)
 plot(Pubforecast, ylim = c(0,1600), xlim = c(1990,2040), col="grey", fcol="black", flwd = 8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "") 
 par(new=T)
-plot(1990:2020, CTtimeseriesforecasts$x, ylim = c(0,1600), xlim = c(1990,2040), xlab="", ylab= "", col="grey",fcol="grey" , main = "", xaxt="n",yaxt="n", pch=16, cex=5)
+plot(1990:2019, CTtimeseriesforecasts$x, ylim = c(0,1600), xlim = c(1990,2040), xlab="", ylab= "", col="grey",fcol="grey" , main = "", xaxt="n",yaxt="n", pch=16, cex=5)
 par(new=T)
 plot(CTforecast, ylim = c(0,1600), xlim = c(1990,2040),col="grey", fcol="grey", flwd = 8, PI=TRUE, pi.col="grey", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "") 
 title(xlab="Year", ylab= "Number", cex.lab=5, main = "Spinal Cord Injury", cex.main=5)
@@ -1279,7 +1280,9 @@ dev.off()
 
 
 CT_time = as.numeric(c(0,0,0,0,0,Therapeutic_Engineering_Clinical$Total))
+CT_time = CT_time[1:length(CT_time)-1]
 PubMed_time = as.numeric(Therapeutic_Engineering_Publication$Total)
+PubMed_time = PubMed_time[1:length(PubMed_time)-1]
 
 PubMedseries <- ts(PubMed_time,start=c(1990))
 plot.ts(PubMedseries)
@@ -1287,7 +1290,7 @@ plot.ts(PubMedseries)
 
 
 auto.arima(PubMed_time)
-PubMedseriesarima <- arima(PubMedseries, order=c(1,1,0)) 
+PubMedseriesarima <- arima(PubMedseries, order=c(0,1,1)) 
 PubMedseriesarima
 
 PubMedtimeseriesforecasts <- forecast:::forecast.Arima(PubMedseriesarima, h=21)
@@ -1308,7 +1311,7 @@ plot.ts(CTseries)
 
 
 auto.arima(CT_time)
-CTseriesarima <- arima(CTseries, order=c(1,1,0)) 
+CTseriesarima <- arima(CTseries, order=c(3,2,0)) 
 CTseriesarima
 
 CTtimeseriesforecasts <- forecast:::forecast.Arima(CTseriesarima, h=21)
@@ -1328,11 +1331,11 @@ CTforecast$x = NULL
 
 png(filename = paste0("/Users/ellen/Documents/Uni/Neuro/Vero/Abbildungen_Tabellen/BilderFinal/TherapeuticEngineeringVorhersage.png"), width = 1920 , height = 1080 )
 par(mgp = c(11.5, 4, 0), mai = c(3,3,1,1))
-plot(1990:2020, PubMedtimeseriesforecasts$x, pch = 15, ylim = c(0,300), xlim = c(1990,2040),col="black", fcol="black",lwd=8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "", cex=5) 
+plot(1990:2019, PubMedtimeseriesforecasts$x, pch = 15, ylim = c(0,300), xlim = c(1990,2040),col="black", fcol="black",lwd=8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "", cex=5) 
 par(new=T)
 plot(Pubforecast, ylim = c(0,300), xlim = c(1990,2040), col="grey", fcol="black", flwd = 8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "") 
 par(new=T)
-plot(1990:2020, CTtimeseriesforecasts$x, ylim = c(0,300), xlim = c(1990,2040), xlab="", ylab= "", col="grey",fcol="grey" ,pi.col="grey", main = "", xaxt="n",yaxt="n", pch=15, cex=5)
+plot(1990:2019, CTtimeseriesforecasts$x, ylim = c(0,300), xlim = c(1990,2040), xlab="", ylab= "", col="grey",fcol="grey" ,pi.col="grey", main = "", xaxt="n",yaxt="n", pch=15, cex=5)
 par(new=T)
 plot(CTforecast, ylim = c(0,300), xlim = c(1990,2040),col="grey", fcol="grey", flwd = 8, PI=TRUE, pi.col="grey", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "") 
 title(xlab="Year", ylab= "Number", cex.lab=5, main = "Therapeutic Engineering", cex.main=5)
@@ -1342,29 +1345,10 @@ graphics::legend(1988,1650, bg="transparent", legend=c("Clinical trials","Public
                  col=c("grey", "black"),pch=15, cex=5, box.lty=0, seg.len =1, x.intersp = 0.3, y.intersp = 0.8)
 dev.off()
 
-
-
-
-
-png(filename = paste0("/Users/ellen/Documents/Uni/Neuro/Vero/Abbildungen_Tabellen/BilderFinal/TherapeuticEngineeringVorhersage.png"), width = 1920 , height = 1080 )
-par(mgp = c(11.5, 4, 0), mai = c(3,3,1,1))
-plot(1990:2020, PubMedtimeseriesforecasts$x, pch = 15, ylim = c(0,300), xlim = c(1990,2040),col="black", fcol="black",lwd=8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "", cex=5) 
-par(new=T)
-plot(Pubforecast, ylim = c(0,300), xlim = c(1990,2040), col="grey", fcol="black", flwd = 8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "") 
-par(new=T)
-plot(1990:2020, CTtimeseriesforecasts$x, ylim = c(0,300), xlim = c(1990,2040), xlab="", ylab= "", col="grey",fcol="grey" ,pi.col="grey", main = "", xaxt="n",yaxt="n", pch=15, cex=5)
-par(new=T)
-plot(CTforecast, ylim = c(0,300), xlim = c(1990,2040),col="grey", fcol="grey", flwd = 8, PI=TRUE, pi.col="grey", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "") 
-title(xlab="Year", ylab= "Number", cex.lab=5, main = "Therapeutic Engineering", cex.main=5)
-axis(1,seq(1990,2040,5), cex.axis=5)
-axis(2,seq(0,300,50), cex.axis=5, las = 2)
-graphics::legend(1988,1650, bg="transparent", legend=c("Clinical trials","Publications" ),
-                 col=c("grey", "black"),pch=15, cex=5, box.lty=0, seg.len =1, x.intersp = 0.3, y.intersp = 0.8)
-dev.off()
 
 
 auto.arima(PubMed_time)
-PubMedseriesarima <- arima(PubMedseries, order=c(1,1,0)) 
+PubMedseriesarima <- arima(PubMedseries, order=c(0,1,1)) 
 PubMedseriesarima
 
 PubMedtimeseriesforecasts <- forecast:::forecast.Arima(PubMedseriesarima, h=7)
@@ -1386,7 +1370,7 @@ plot.ts(CTseries)
 
 
 auto.arima(CT_time)
-CTseriesarima <- arima(CTseries, order=c(1,1,0)) 
+CTseriesarima <- arima(CTseries, order=c(3,2,0)) 
 CTseriesarima
 
 CTtimeseriesforecasts <- forecast:::forecast.Arima(CTseriesarima, h=7)
@@ -1401,11 +1385,11 @@ CTforecast$x = NULL
 
 png(filename = paste0("/Users/ellen/Documents/Uni/Neuro/Vero/Abbildungen_Tabellen/BilderFinal/TherapeuticEngineeringVorhersage5J.png"), width = 1920 , height = 1080 )
 par(mgp = c(11.5, 4, 0), mai = c(3,3,1,1))
-plot(1990:2020, PubMedtimeseriesforecasts$x, pch = 17, ylim = c(0,300), xlim = c(1990,2025),col="black", fcol="black",lwd=8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "", cex=5) 
+plot(1990:2019, PubMedtimeseriesforecasts$x, pch = 17, ylim = c(0,300), xlim = c(1990,2025),col="black", fcol="black",lwd=8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "", cex=5) 
 par(new=T)
 plot(Pubforecast, ylim = c(0,300), xlim = c(1990,2025), col="grey", fcol="black", flwd = 8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "") 
 par(new=T)
-plot(1990:2020, CTtimeseriesforecasts$x, ylim = c(0,300), xlim = c(1990,2025), xlab="", ylab= "", col="grey",fcol="grey" ,pi.col="grey", main = "", xaxt="n",yaxt="n", pch=16, cex=5)
+plot(1990:2019, CTtimeseriesforecasts$x, ylim = c(0,300), xlim = c(1990,2025), xlab="", ylab= "", col="grey",fcol="grey" ,pi.col="grey", main = "", xaxt="n",yaxt="n", pch=16, cex=5)
 par(new=T)
 plot(CTforecast, ylim = c(0,300), xlim = c(1990,2025),col="grey", fcol="grey", flwd = 8, PI=TRUE, pi.col="grey", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "") 
 title(xlab="Year", ylab= "Number", cex.lab=5, main = "Therapeutic Engineering", cex.main=5)
@@ -1425,12 +1409,14 @@ dev.off()
 
 Publication = as.numeric(Therapeutic_Engineering_Publication$Bioengineering)
 clinical = as.numeric(c(c(rep("NA", 5),Therapeutic_Engineering_Clinical$Bioengineering)))
+clinical = clinical[1:length(clinical)-1]
+Publication = Publication[1:length(Publication)-1]
 
 Publicationseries <- ts(Publication,start=c(1990))
 plot.ts(Publicationseries)
 
 auto.arima(Publicationseries)
-Publicationseriesarima <- arima(Publicationseries, order=c(0,2,1)) 
+Publicationseriesarima <- arima(Publicationseries, order=c(2,2,1)) 
 Publicationtimeseriesforecasts <- forecast:::forecast.Arima(Publicationseriesarima, h=6)
 
 
@@ -1440,7 +1426,7 @@ Publicationtimeseriesforecasts <- forecast:::forecast.Arima(Publicationseriesari
 
 clinicalseries <- ts(clinical,start=c(1990))
 auto.arima(clinicalseries)
-clinicalseriesarima <- arima(clinicalseries, order=c(2,1,0)) 
+clinicalseriesarima <- arima(clinicalseries, order=c(0,1,0)) 
 clinicaltimeseriesforecasts <- forecast:::forecast.Arima(clinicalseriesarima, h=5)
 
 
@@ -1463,11 +1449,11 @@ CTforecast$x = NULL
 
 png(filename = paste0("/Users/ellen/Documents/Uni/Neuro/Vero/Abbildungen_Tabellen/BilderFinal/Bioengineering.png"), width = 1920 , height = 1080 )
 par(mgp = c(11.5, 4, 0), mai = c(3,3,1,1))
-plot(1990:2020, Publicationtimeseriesforecasts$x, pch = 17, ylim = c(0,300), xlim = c(1990,2025),col="black", fcol="black",lwd=8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "", cex=5) 
+plot(1990:2019, Publicationtimeseriesforecasts$x, pch = 17, ylim = c(0,300), xlim = c(1990,2025),col="black", fcol="black",lwd=8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "", cex=5) 
 par(new=T)
 plot(Pubforecast, ylim = c(0,300), xlim = c(1990,2025), col="grey", fcol="black", flwd = 8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "") 
 par(new=T)
-plot(1990:2020, clinicaltimeseriesforecasts$x, ylim = c(0,300), xlim = c(1990,2025), xlab="", ylab= "", col="grey",fcol="grey" , main = "", xaxt="n",yaxt="n", pch=16, cex=5)
+plot(1990:2019, clinicaltimeseriesforecasts$x, ylim = c(0,300), xlim = c(1990,2025), xlab="", ylab= "", col="grey",fcol="grey" , main = "", xaxt="n",yaxt="n", pch=16, cex=5)
 par(new=T)
 plot(CTforecast, ylim = c(0,300), xlim = c(1990,2025),col="grey", fcol="grey", flwd = 8, PI=TRUE, pi.col="grey", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "") 
 title(xlab="Year", ylab= "Number", cex.lab=5, main = "Bioengineering", cex.main=5)
@@ -1483,6 +1469,8 @@ dev.off()
 
 Publication = as.numeric(Therapeutic_Engineering_Publication$Engineering)
 clinical = as.numeric(c(c(rep("NA", 5),Therapeutic_Engineering_Clinical$Engineering)))
+clinical = clinical[1:length(clinical)-1]
+Publication = Publication[1:length(Publication)-1]
 
 Publicationseries <- ts(Publication,start=c(1990))
 auto.arima(Publicationseries)
@@ -1495,7 +1483,7 @@ Publicationtimeseriesforecasts <- forecast:::forecast.Arima(Publicationseriesari
 
 clinicalseries <- ts(clinical,start=c(1990))
 auto.arima(clinicalseries)
-clinicalseriesarima <- arima(clinicalseries, order=c(1,1,0)) 
+clinicalseriesarima <- arima(clinicalseries, order=c(1,2,1)) 
 
 clinicaltimeseriesforecasts <- forecast:::forecast.Arima(clinicalseriesarima, h=5)
 
@@ -1519,14 +1507,14 @@ CTforecast$x = NULL
 
 png(filename = paste0("/Users/ellen/Documents/Uni/Neuro/Vero/Abbildungen_Tabellen/BilderFinal/Engineering.png"), width = 1920 , height = 1080 )
 par(mgp = c(11.5, 4, 0), mai = c(3,3,1,1))
-plot(1990:2020, Publicationtimeseriesforecasts$x, pch = 17, ylim = c(0,300), xlim = c(1990,2025),col="black", fcol="black",lwd=8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "", cex=5) 
+plot(1990:2019, Publicationtimeseriesforecasts$x, pch = 17, ylim = c(0,300), xlim = c(1990,2025),col="black", fcol="black",lwd=8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "", cex=5) 
 par(new=T)
 plot(Pubforecast, ylim = c(0,300), xlim = c(1990,2025), col="grey", fcol="black", flwd = 8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "") 
 par(new=T)
-plot(1990:2020, clinicaltimeseriesforecasts$x, ylim = c(0,300), xlim = c(1990,2025), xlab="", ylab= "", col="grey",fcol="grey" , main = "", xaxt="n",yaxt="n", pch=16, cex=5)
+plot(1990:2019, clinicaltimeseriesforecasts$x, ylim = c(0,300), xlim = c(1990,2025), xlab="", ylab= "", col="grey",fcol="grey" , main = "", xaxt="n",yaxt="n", pch=16, cex=5)
 par(new=T)
 plot(CTforecast, ylim = c(0,300), xlim = c(1990,2025),col="grey", fcol="grey", flwd = 8, PI=TRUE, pi.col="grey", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "") 
-title(xlab="Year", ylab= "Number", cex.lab=5, main = "Engineering", cex.main=5)
+title(xlab="Year", ylab= "Number", cex.lab=5, main = "Electronic Engineering", cex.main=5)
 axis(1,seq(1990,2025,5), cex.axis=5)
 axis(2,seq(0,300,50), cex.axis=5, las = 2)
 graphics::legend(1990,310, bg="transparent", legend=c("Clinical trials","Publications" ),
@@ -1538,6 +1526,8 @@ dev.off()
 
 clinical = as.numeric(c(c(rep("NA", 5),Transplantation_Clinical$`Graft/Grafting/Transplantation`)))
 Publication = as.numeric(Transplantation_Publication$`Graft/Grafting/Transplantation`)
+clinical = clinical[1:length(clinical)-1]
+Publication = Publication[1:length(Publication)-1]
 
 Publicationseries <- ts(Publication,start=c(1990))
 auto.arima(Publicationseries)
@@ -1552,7 +1542,7 @@ Publicationtimeseriesforecasts <- forecast:::forecast.Arima(Publicationseriesari
 
 clinicalseries <- ts(clinical,start=c(1990))
 auto.arima(clinicalseries)
-clinicalseriesarima <- arima(clinicalseries, order=c(0,0,0)) 
+clinicalseriesarima <- arima(clinicalseries, order=c(0,1,0)) 
 
 clinicaltimeseriesforecasts <- forecast:::forecast.Arima(clinicalseriesarima, h=5)
 
@@ -1574,11 +1564,11 @@ CTforecast$x = NULL
 
 png(filename = paste0("/Users/ellen/Documents/Uni/Neuro/Vero/Abbildungen_Tabellen/BilderFinal/Graft.png"), width = 1920 , height = 1080 )
 par(mgp = c(11.5, 4, 0), mai = c(3,3,1,1))
-plot(1990:2020, Publicationtimeseriesforecasts$x, pch = 17, ylim = c(0,300), xlim = c(1990,2025),col="black", fcol="black",lwd=8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "", cex=5) 
+plot(1990:2019, Publicationtimeseriesforecasts$x, pch = 17, ylim = c(0,300), xlim = c(1990,2025),col="black", fcol="black",lwd=8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "", cex=5) 
 par(new=T)
 plot(Pubforecast, ylim = c(0,300), xlim = c(1990,2025), col="grey", fcol="black", flwd = 8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "") 
 par(new=T)
-plot(1990:2020, clinicaltimeseriesforecasts$x, ylim = c(0,300), xlim = c(1990,2025), xlab="", ylab= "", col="grey",fcol="grey" , main = "", xaxt="n",yaxt="n", pch=16, cex=5)
+plot(1990:2019, clinicaltimeseriesforecasts$x, ylim = c(0,300), xlim = c(1990,2025), xlab="", ylab= "", col="grey",fcol="grey" , main = "", xaxt="n",yaxt="n", pch=16, cex=5)
 par(new=T)
 plot(CTforecast, ylim = c(0,300), xlim = c(1990,2025),col="grey", fcol="grey", flwd = 8, PI=TRUE, pi.col="grey", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "") 
 title(xlab="Year", ylab= "Number", cex.lab=5, main = "Graft/Grafting/Transplantation", cex.main=5)
@@ -1595,6 +1585,8 @@ dev.off()
 
 clinical = as.numeric(c(c(rep("NA", 5),Transplantation_Clinical$`Olfactory Ensheathing Cell`)))
 Publication = as.numeric(Transplantation_Publication$`Olfactory Ensheathing Cell`)
+clinical = clinical[1:length(clinical)-1]
+Publication = Publication[1:length(Publication)-1]
 
 Publicationseries <- ts(Publication,start=c(1990))
 auto.arima(Publicationseries)
@@ -1632,11 +1624,11 @@ CTforecast$x = NULL
 
 png(filename = paste0("/Users/ellen/Documents/Uni/Neuro/Vero/Abbildungen_Tabellen/BilderFinal/OEC.png"), width = 1920 , height = 1080 )
 par(mgp = c(10, 4, 0), mai = c(3,3,1,1))
-plot(1990:2020, Publicationtimeseriesforecasts$x, pch = 17, ylim = c(0,40), xlim = c(1990,2025),col="black", fcol="black",lwd=8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "", cex=5) 
+plot(1990:2019, Publicationtimeseriesforecasts$x, pch = 17, ylim = c(0,40), xlim = c(1990,2025),col="black", fcol="black",lwd=8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "", cex=5) 
 par(new=T)
 plot(Pubforecast, ylim = c(0,40), xlim = c(1990,2025), col="grey", fcol="black", flwd = 8, PI=TRUE, pi.col="black", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "") 
 par(new=T)
-plot(1990:2020, clinicaltimeseriesforecasts$x, ylim = c(0,40), xlim = c(1990,2025), xlab="", ylab= "", col="grey",fcol="grey" , main = "", xaxt="n",yaxt="n", pch=16, cex=5)
+plot(1990:2019, clinicaltimeseriesforecasts$x, ylim = c(0,40), xlim = c(1990,2025), xlab="", ylab= "", col="grey",fcol="grey" , main = "", xaxt="n",yaxt="n", pch=16, cex=5)
 par(new=T)
 plot(CTforecast, ylim = c(0,40), xlim = c(1990,2025),col="grey", fcol="grey", flwd = 8, PI=TRUE, pi.col="grey", main="", xaxt="n",yaxt="n" ,xlab="", ylab= "") 
 title(xlab="Year", ylab= "Number", cex.lab=5, main = "Olfactory Ensheathing Cell", cex.main=5)
